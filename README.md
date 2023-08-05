@@ -2,4 +2,5 @@
 Go to `https://github.com/Akintunde102/ollama-nestjs-api` and follow the instructions
 
 ### Installation
-Run `yarn dev`
+- Run `npm install`
+- Run `npm run dev`
