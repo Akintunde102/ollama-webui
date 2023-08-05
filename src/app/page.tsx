@@ -2,6 +2,7 @@
 
 import React, { useState, ChangeEvent, FormEvent, use } from 'react';
 import axios from 'axios';
+import DisplayStringWithLineBreaks from './components/DisplayWithLinebreaks';
 
 const MyForm: React.FC = () => {
   const [model, setModel] = useState<string>('llama2-uncensored');
@@ -26,9 +27,8 @@ const MyForm: React.FC = () => {
     };
 
     try {
-      setResponse("")
       setLoading(true);
-      const response = await axios.post('http://localhost:3000/generate-data', requestData, {
+      const response = await axios.post('http://localhost:9492/generate-data', requestData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -36,7 +36,8 @@ const MyForm: React.FC = () => {
 
       setLoading(false);
 
-      setResponse(response.data.response);
+      const responseMessage = response.data.response;
+      setResponse(responseMessage);
     } catch (error) {
       setLoading(false);
       console.error('Error:', (error as any).message);
@@ -45,8 +46,8 @@ const MyForm: React.FC = () => {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-8 bg-white p-6 shadow-md">
+      <div className="z-10 w-full max-w-xl items-center justify-between font-mono text-sm lg:flex">
+        <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-8 bg-white p-6 shadow-md w-full">
           <div className="mb-4 max-w-md">
             <label htmlFor="model" className="block text-gray-700 font-bold mb-2">
               Model:
@@ -66,13 +67,15 @@ const MyForm: React.FC = () => {
             <label htmlFor="prompt" className="block text-gray-700 font-bold mb-2">
               Prompt:
             </label>
-            <input
-              type="text"
+            <textarea
               id="prompt"
               value={prompt}
-              onChange={handlePromptChange}
+              onChange={(e: any) => handlePromptChange(e)}
               className="appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            />
+            >
+
+              {prompt}
+            </textarea>
           </div>
 
           <button
@@ -85,7 +88,7 @@ const MyForm: React.FC = () => {
           {response && (
             <div className="mt-4">
               <h2 className="text-lg font-bold mb-2">Response:</h2>
-              <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap">{JSON.stringify(response, null, 2)}</pre>
+              <pre className="bg-gray-100 p-4 rounded whitespace-pre-wrap"><DisplayStringWithLineBreaks text={response} /></pre>
             </div>
           )}
         </form>
